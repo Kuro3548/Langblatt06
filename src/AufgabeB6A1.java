@@ -2,10 +2,10 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 /**
- * In der Vorlesung haben Sie den Algorithmus Radixsort kennengelernt, der oft damit motiviert
- * wird, dass eine Liste von mehrdimensionalen Schlüsseln sortiert werden soll. Tatsächlich ist
- * Radixsort aber auch gut dazu geeignet, eine Liste von Ganzzahlen zu sortieren. Dabei wird jeder
- * int-Wert als ein Schlüssel mit vier Komponenten interpretiert, wobei jede Komponente eines
+ * In der Vorlesung haben Sie den Algorithmus Radixsort kennengelernt, der oft damit motiviert wird,
+ * dass eine Liste von mehrdimensionalen Schlüsseln sortiert werden soll.
+ * Tatsächlich ist Radixsort aber auch gut dazu geeignet, eine Liste von Ganzzahlen zu sortieren.
+ * Dabei wird jeder int-Wert als ein Schlüssel mit vier Komponenten interpretiert, wobei jede Komponente eines
  * der vier Bytes ist, welche den int-Wert bilden. Das höchstwertigste Byte (Most-SignificantDigit, MSD) ist die erste Komponente, und das niederwertigste Byte (Least-Significant-Digit,
  * LSD) ist die letzte Komponente. Beispiel:
  * Wert in Basis-10-Darstellung: 1661914940
@@ -92,7 +92,26 @@ public class AufgabeB6A1 {
      * @param b
      */
     public void sortByByte(int l, int r, int b) {
-        //TODO: SortByByte
+        //TODO: SortByByte --Drafted--
+        int[] counted = new int[256];
+        for(int i = 0; i < data.length; i++){
+            int key = (data[i] >> (8 * b)) & 0xFF;
+            counted[key]++;
+        }
+        //Keys counted, add up
+        for(int i = 1; i < counted.length; i++){
+            counted[i] += counted[i - 1];
+        }
+        //Indices calculated, next up: Sort
+        int[] out = new int [data.length];
+        for(int i = data.length - 1; i >= 0; i--){
+            int key = (data[i] >> (8 * b)) & 0xFF;
+            int index = counted[key];
+            out[index] = data[i];
+        }
+        for(int i = 0; i < data.length; i++){
+            data[i] = out[i];
+        }
     }
 
     /**
