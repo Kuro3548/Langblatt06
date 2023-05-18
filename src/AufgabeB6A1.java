@@ -71,10 +71,15 @@ public class AufgabeB6A1 {
     }
 
     private static int[] generateInput(int size){
+        //TODO: [Testing] generateInput
         int[] out = new int[size];
         for(int i = 0; i < out.length; i++){
             double f = Math.random()/Math.nextDown(1.0);
-            out[i] = (int)(0 * (1.0 - f) + Integer.MAX_VALUE * f);
+            int bit = (int)(0 * (1.0 - f) + Integer.BYTES * 8 * f);
+            out[i] = (int)(Math.pow(2,bit));
+            f = Math.random()/Math.nextDown(1.0);
+            int offset = (int)(0 * (1.0 - f) + bit * f);
+            out[i] = Math.abs(out[i] + offset);
         }
         return out;
     }
@@ -196,11 +201,9 @@ public class AufgabeB6A1 {
         //TODO: msdRadix --Part of Array is not sorted after (Last Section)--
         //Fehlerbehandlung
         if(l < 0 || r < l || data.length <= r){
-            //throw new IllegalArgumentException("Bounds outside of array: " + l + ", " + r + " outside " + data.length);
             return;
         }
         if(b < 0 || b >= Integer.BYTES){
-            //throw new IllegalArgumentException("Byte accessed was outside range: b = " + b);
             return;
         }
         //Rekursionsanker
@@ -208,12 +211,17 @@ public class AufgabeB6A1 {
             insertionSort(l, r);
             return;
         }
+
         int[] intervals = sortByByte(l, r, b);
+        intervals[0] += l;
         for(int i = 1; i < intervals.length; i++){
             intervals[i] += intervals[i - 1];
         }
         msdRadix(l, intervals[1], b - 1);
         for(int i = 1; i < intervals.length - 1; i++){
+            if(intervals[i + 1] >= data.length){
+                intervals[i + 1] = data.length - 1;
+            }
             msdRadix(intervals[i], intervals[i + 1], b - 1);
         }
         msdRadix(intervals[intervals.length - 1], r, b - 1);
@@ -233,14 +241,21 @@ public class AufgabeB6A1 {
         }
         //System.out.println(isSorted(l, r));
     }
-    public boolean isSorted(int l, int r){
+
+    /**
+     * [Test] Checks if the given interval is sorted in descending order
+     * @param l - Lower Bound inclusive
+     * @param r - Upper Bound inclusive
+     * @return Index i that breaks the order, else -1 if the array is correctly sorted
+     */
+    public int isSorted(int l, int r){
         int prev = data[l];
         for(int i = l + 1; i <= r; i++){
             if(prev < data[i]){
-                return false;
+                return i;
             }
             prev = data[i];
         }
-        return true;
+        return -1;
     }
 }
